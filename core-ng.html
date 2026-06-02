@@ -1,0 +1,763 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--navy:#0a1628;--navy2:#0f2040;--card:#111e35;--card2:#162440;
+--teal:#00c4a7;--teal2:#00a88d;--cyan:#38bdf8;--blue:#60a5fa;
+--text:#e2e8f0;--muted:#94a3b8;--border:#1e3a5f;
+--accent:#00c4a7;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--navy);color:var(--text);line-height:1.5}
+h1,h2,h3,h4{font-weight:600}
+
+/* NAV */
+#sticky-nav{position:sticky;top:0;z-index:100;background:rgba(10,22,40,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+#sticky-nav a{color:var(--muted);text-decoration:none;font-size:12px;padding:4px 10px;border-radius:20px;border:1px solid transparent;transition:.2s;white-space:nowrap}
+#sticky-nav a:hover{color:var(--teal);border-color:var(--border)}
+#sticky-nav a.active{color:var(--teal);border-color:var(--teal);background:rgba(0,196,167,.08)}
+.nav-title{color:var(--teal);font-weight:700;font-size:13px;margin-right:8px;white-space:nowrap}
+
+/* HERO */
+#hero{padding:60px 20px 40px;text-align:center;position:relative}
+.hub{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:200px;height:200px;border-radius:50%;border:2px solid var(--teal);background:radial-gradient(circle,rgba(0,196,167,.12) 0%,rgba(0,196,167,.02) 100%);margin:20px auto;position:relative;animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,196,167,.2)}50%{box-shadow:0 0 0 20px rgba(0,196,167,.0)}}
+.hub-text{font-size:13px;font-weight:700;color:var(--teal);text-align:center;line-height:1.3}
+.hub-sub{font-size:10px;color:var(--muted);margin-top:4px}
+.hero-title{font-size:clamp(22px,4vw,38px);font-weight:800;background:linear-gradient(90deg,var(--teal),var(--cyan),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:var(--muted);max-width:680px;margin:12px auto 0;font-size:clamp(13px,2vw,16px)}
+.hub-ring{position:absolute;width:220px;height:220px;border-radius:50%;border:1px dashed rgba(0,196,167,.3);animation:spin 20s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* SECTIONS */
+section{padding:40px 20px;max-width:1100px;margin:0 auto}
+.section-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
+.section-title{font-size:clamp(18px,3vw,26px);font-weight:700;margin-bottom:6px}
+.section-sub{color:var(--muted);font-size:14px;margin-bottom:28px}
+
+/* LAYER CARDS */
+.layers-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.layer-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:.25s}
+.layer-card:hover{border-color:var(--teal);transform:translateY(-2px)}
+.layer-header{padding:16px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
+.layer-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.layer-title{font-size:14px;font-weight:600}
+.layer-count{font-size:11px;color:var(--muted);margin-top:2px}
+.layer-chevron{margin-left:auto;color:var(--muted);transition:.25s;font-size:16px}
+.layer-card.open .layer-chevron{transform:rotate(180deg)}
+.layer-body{display:none;padding:0 18px 16px;border-top:1px solid var(--border)}
+.layer-card.open .layer-body{display:block}
+
+/* SERVICE CARDS */
+.svc-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.svc-card{background:var(--card2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:.2s}
+.svc-card:hover{border-color:var(--cyan)}
+.svc-header{padding:10px 14px;display:flex;align-items:center;gap:10px}
+.svc-badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;white-space:nowrap}
+.svc-name{font-size:13px;font-weight:600}
+.svc-purpose{font-size:12px;color:var(--muted);margin-top:2px}
+.svc-detail{display:none;padding:0 14px 12px;border-top:1px solid var(--border)}
+.svc-card.open .svc-detail{display:block}
+.svc-detail h4{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);margin:10px 0 6px}
+.cap-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:3px}
+.cap-list li{font-size:12px;color:var(--muted);padding-left:14px;position:relative}
+.cap-list li::before{content:"›";position:absolute;left:0;color:var(--teal)}
+.outcome-box{margin-top:10px;padding:8px 10px;background:rgba(0,196,167,.07);border-left:2px solid var(--teal);border-radius:0 6px 6px 0;font-size:12px;color:var(--text)}
+
+/* SEARCH */
+.search-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+#svc-search{flex:1;min-width:200px;padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;outline:none}
+#svc-search:focus{border-color:var(--teal)}
+.filter-btns{display:flex;gap:6px;flex-wrap:wrap}
+.fbtn{padding:6px 12px;border:1px solid var(--border);border-radius:20px;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;transition:.2s}
+.fbtn:hover,.fbtn.active{background:rgba(0,196,167,.12);border-color:var(--teal);color:var(--teal)}
+.expand-btns{display:flex;gap:8px;margin-bottom:16px}
+.ebtn{padding:6px 14px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;transition:.2s}
+.ebtn:hover{border-color:var(--teal);color:var(--teal)}
+
+/* TABS */
+.tab-bar{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:24px;overflow-x:auto}
+.tab{padding:10px 18px;border:none;background:transparent;color:var(--muted);font-size:13px;cursor:pointer;border-bottom:2px solid transparent;transition:.2s;white-space:nowrap}
+.tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.audience-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.aud-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px}
+.aud-card h4{font-size:13px;font-weight:600;margin-bottom:8px;color:var(--cyan)}
+.aud-card ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:4px}
+.aud-card ul li{font-size:12px;color:var(--muted);padding-left:14px;position:relative}
+.aud-card ul li::before{content:"→";position:absolute;left:0;color:var(--teal);font-size:10px;top:1px}
+
+/* FLOW */
+.flow-steps{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding-bottom:8px}
+.flow-step{flex:1;min-width:120px;text-align:center;position:relative}
+.flow-step:not(:last-child)::after{content:"";position:absolute;top:22px;right:-1px;width:2px;height:2px;border-top:2px solid var(--teal);border-right:2px solid var(--teal);transform:rotate(45deg);z-index:1}
+.flow-connector{width:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding-top:12px}
+.flow-connector::after{content:"→";color:var(--teal);font-size:18px}
+.step-num{width:44px;height:44px;border-radius:50%;background:rgba(0,196,167,.12);border:1px solid var(--teal);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:16px;font-weight:700;color:var(--teal)}
+.step-label{font-size:13px;font-weight:600;margin-bottom:4px}
+.step-desc{font-size:11px;color:var(--muted);line-height:1.4}
+.flow-wrap{display:flex;flex-wrap:nowrap;gap:0;overflow-x:auto;padding:0 0 8px}
+
+/* VALUE CARDS */
+.value-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.value-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;transition:.2s}
+.value-card:hover{border-color:var(--teal);transform:translateY(-2px)}
+.value-icon{font-size:28px;margin-bottom:8px}
+.value-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+.value-desc{font-size:11px;color:var(--muted)}
+
+/* LEGEND */
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* GLOSSARY */
+.glossary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.gloss-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.gloss-term{font-size:13px;font-weight:600;color:var(--cyan);margin-bottom:4px}
+.gloss-def{font-size:12px;color:var(--muted)}
+
+/* CLOSING */
+#closing{background:linear-gradient(135deg,rgba(0,196,167,.07),rgba(96,165,250,.07));border-top:1px solid var(--border);text-align:center;padding:60px 20px}
+.closing-title{font-size:clamp(18px,3vw,28px);font-weight:700;margin-bottom:16px}
+.closing-text{color:var(--muted);max-width:640px;margin:0 auto;font-size:14px;line-height:1.7}
+
+/* TOOLTIP */
+.tip{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:rgba(0,196,167,.15);border:1px solid var(--teal);font-size:10px;color:var(--teal);cursor:help;vertical-align:middle;margin-left:4px;position:relative}
+.tip:hover::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%);background:var(--card2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:11px;color:var(--text);white-space:nowrap;max-width:220px;white-space:normal;z-index:200;line-height:1.4}
+
+/* SEARCH HIGHLIGHT */
+.highlight{background:rgba(0,196,167,.25);border-radius:2px}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(20px);transition:.5s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:600px){
+.flow-wrap{gap:0}.flow-connector{width:24px}
+#sticky-nav a{font-size:11px;padding:3px 8px}
+}
+</style>
+
+<!-- STICKY NAV -->
+<div id="sticky-nav">
+  <span class="nav-title">Core NG</span>
+  <a href="#hero">Overview</a>
+  <a href="#ecosystem">Ecosystem</a>
+  <a href="#flow">How it Works</a>
+  <a href="#explorer">Services</a>
+  <a href="#audience">Audiences</a>
+  <a href="#value">Value</a>
+</div>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="reveal">
+    <div class="section-label">Enterprise Solution</div>
+    <h1 class="hero-title">Core NG Enterprise Solution</h1>
+    <p class="hero-sub">An integrated information intelligence, monitoring, asset, reporting, and operations platform designed to help enterprises understand, manage, and optimise their technology environments.</p>
+    <div style="display:flex;justify-content:center;margin:28px 0 8px">
+      <div class="hub" style="position:relative">
+        <div class="hub-ring" style="position:absolute;inset:-10px;width:220px;height:220px"></div>
+        <div class="hub-text">Core NG<br>Enterprise</div>
+        <div class="hub-sub">16 Services · 7 Layers</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px">
+      <span style="font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid rgba(0,196,167,.3);color:var(--teal)">Intelligence</span>
+      <span style="font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid rgba(56,189,248,.3);color:var(--cyan)">Monitoring</span>
+      <span style="font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid rgba(96,165,250,.3);color:var(--blue)">Asset Management</span>
+      <span style="font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid rgba(0,196,167,.3);color:var(--teal)">Operations</span>
+      <span style="font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid rgba(56,189,248,.3);color:var(--cyan)">Reporting</span>
+      <span style="font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid rgba(96,165,250,.3);color:var(--blue)">Resilience</span>
+    </div>
+  </div>
+</div>
+
+<!-- ECOSYSTEM -->
+<section id="ecosystem" class="reveal">
+  <div class="section-label">Product Ecosystem</div>
+  <h2 class="section-title">Service Architecture</h2>
+  <p class="section-sub">Seven interconnected layers forming a complete operational intelligence platform. Click a layer to explore.</p>
+
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:#00c4a7"></div>Intelligence</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#38bdf8"></div>Visibility</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#818cf8"></div>Asset & Endpoint</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#f59e0b"></div>Operations</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#34d399"></div>Reporting</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#f87171"></div>Resilience</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#a78bfa"></div>Integrations</div>
+  </div>
+
+  <div class="expand-btns">
+    <button class="ebtn" onclick="expandAll()">Expand All</button>
+    <button class="ebtn" onclick="collapseAll()">Collapse All</button>
+  </div>
+
+  <div class="layers-grid" id="layers-grid">
+
+    <!-- Layer 1 -->
+    <div class="layer-card" data-layer="1">
+      <div class="layer-header" onclick="toggleLayer(this)">
+        <div class="layer-icon" style="background:rgba(0,196,167,.12);color:#00c4a7">🧠</div>
+        <div><div class="layer-title">Core Intelligence Layer</div><div class="layer-count">1 service · CMDB</div></div>
+        <div class="layer-chevron">▼</div>
+      </div>
+      <div class="layer-body">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Creates the structured source of truth underpinning all other services.</div>
+        <div class="svc-list" id="layer1-svcs"></div>
+      </div>
+    </div>
+
+    <!-- Layer 2 -->
+    <div class="layer-card" data-layer="2">
+      <div class="layer-header" onclick="toggleLayer(this)">
+        <div class="layer-icon" style="background:rgba(56,189,248,.12);color:#38bdf8">👁️</div>
+        <div><div class="layer-title">Visibility & Monitoring Layer</div><div class="layer-count">3 services · Log · Drawing · AFN · DEM · FSO</div></div>
+        <div class="layer-chevron">▼</div>
+      </div>
+      <div class="layer-body">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Provides network, application, and log visibility across the estate.</div>
+        <div class="svc-list" id="layer2-svcs"></div>
+      </div>
+    </div>
+
+    <!-- Layer 3 -->
+    <div class="layer-card" data-layer="3">
+      <div class="layer-header" onclick="toggleLayer(this)">
+        <div class="layer-icon" style="background:rgba(129,140,248,.12);color:#818cf8">📦</div>
+        <div><div class="layer-title">Asset & Endpoint Management</div><div class="layer-count">4 services · Asset · EUC · IPAM · Mobile</div></div>
+        <div class="layer-chevron">▼</div>
+      </div>
+      <div class="layer-body">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Tracks, manages and controls IT assets from IP addresses to physical hardware.</div>
+        <div class="svc-list" id="layer3-svcs"></div>
+      </div>
+    </div>
+
+    <!-- Layer 4 -->
+    <div class="layer-card" data-layer="4">
+      <div class="layer-header" onclick="toggleLayer(this)">
+        <div class="layer-icon" style="background:rgba(245,158,11,.12);color:#f59e0b">⚙️</div>
+        <div><div class="layer-title">Operations & Incident Management</div><div class="layer-count">1 service · ITOC</div></div>
+        <div class="layer-chevron">▼</div>
+      </div>
+      <div class="layer-body">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Manages events, incidents and problems for technology operations.</div>
+        <div class="svc-list" id="layer4-svcs"></div>
+      </div>
+    </div>
+
+    <!-- Layer 5 -->
+    <div class="layer-card" data-layer="5">
+      <div class="layer-header" onclick="toggleLayer(this)">
+        <div class="layer-icon" style="background:rgba(52,211,153,.12);color:#34d399">📊</div>
+        <div><div class="layer-title">Reporting & Executive Insight</div><div class="layer-count">1 service · Reporting</div></div>
+        <div class="layer-chevron">▼</div>
+      </div>
+      <div class="layer-body">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Turns operational data into scheduled, consolidated and custom reports.</div>
+        <div class="svc-list" id="layer5-svcs"></div>
+      </div>
+    </div>
+
+    <!-- Layer 6 -->
+    <div class="layer-card" data-layer="6">
+      <div class="layer-header" onclick="toggleLayer(this)">
+        <div class="layer-icon" style="background:rgba(248,113,113,.12);color:#f87171">🛡️</div>
+        <div><div class="layer-title">Resilience & Support Layer</div><div class="layer-count">2 services · DR · Hardware</div></div>
+        <div class="layer-chevron">▼</div>
+      </div>
+      <div class="layer-body">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Keeps the platform resilient, recoverable and hardware-supported.</div>
+        <div class="svc-list" id="layer6-svcs"></div>
+      </div>
+    </div>
+
+    <!-- Layer 7 -->
+    <div class="layer-card" data-layer="7">
+      <div class="layer-header" onclick="toggleLayer(this)">
+        <div class="layer-icon" style="background:rgba(167,139,250,.12);color:#a78bfa">🔗</div>
+        <div><div class="layer-title">Integrations & Extended Solutions</div><div class="layer-count">2 services · Integration · CHMS</div></div>
+        <div class="layer-chevron">▼</div>
+      </div>
+      <div class="layer-body">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Connects Core NG to third-party systems and bundles services into broader solutions.</div>
+        <div class="svc-list" id="layer7-svcs"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="flow" class="reveal">
+  <div class="section-label">How it Works</div>
+  <h2 class="section-title">The Core NG Workflow</h2>
+  <p class="section-sub">Six stages from raw data collection to operational improvement.</p>
+  <div class="flow-wrap" style="gap:0;align-items:flex-start">
+    <div class="flow-step">
+      <div class="step-num">1</div>
+      <div class="step-label">Collect</div>
+      <div class="step-desc">Gather data from devices, logs, IP, assets, flows and endpoints</div>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-step">
+      <div class="step-num">2</div>
+      <div class="step-label">Structure</div>
+      <div class="step-desc">Enrich and normalise data into the CMDB — your single source of truth</div>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-step">
+      <div class="step-num">3</div>
+      <div class="step-label">Monitor</div>
+      <div class="step-desc">Detect faults, performance issues, security events and IP conflicts</div>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-step">
+      <div class="step-num">4</div>
+      <div class="step-label">Analyse</div>
+      <div class="step-desc">Investigate alerts, correlate events and explore network drawings</div>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-step">
+      <div class="step-num">5</div>
+      <div class="step-label">Report</div>
+      <div class="step-desc">Deliver scheduled, ad-hoc and executive reports on KPIs</div>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-step">
+      <div class="step-num">6</div>
+      <div class="step-label">Respond</div>
+      <div class="step-desc">Resolve incidents, update SOPs and continuously improve operations</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICE EXPLORER -->
+<section id="explorer" class="reveal">
+  <div class="section-label">Service Explorer</div>
+  <h2 class="section-title">All 16 Services</h2>
+  <p class="section-sub">Search by name or keyword. Click any card for full details.</p>
+  <div class="search-row">
+    <input id="svc-search" type="text" placeholder="Search: IPAM, Logs, Assets, AFN, Reporting..." oninput="filterSvcs()">
+    <div class="filter-btns">
+      <button class="fbtn active" onclick="filterTag(this,'all')">All</button>
+      <button class="fbtn" onclick="filterTag(this,'intelligence')">Intelligence</button>
+      <button class="fbtn" onclick="filterTag(this,'monitoring')">Monitoring</button>
+      <button class="fbtn" onclick="filterTag(this,'asset')">Asset</button>
+      <button class="fbtn" onclick="filterTag(this,'operations')">Operations</button>
+      <button class="fbtn" onclick="filterTag(this,'reporting')">Reporting</button>
+      <button class="fbtn" onclick="filterTag(this,'resilience')">Resilience</button>
+    </div>
+  </div>
+  <div id="svc-explorer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px"></div>
+  <div id="no-results" style="display:none;text-align:center;padding:40px;color:var(--muted);font-size:14px">No services match your search.</div>
+</section>
+
+<!-- AUDIENCE VIEWS -->
+<section id="audience" class="reveal">
+  <div class="section-label">Audience Views</div>
+  <h2 class="section-title">Tailored Perspectives</h2>
+  <p class="section-sub">Core NG serves different stakeholders. Select your role for a focused view.</p>
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab(this,'exec')">📈 Executive View</button>
+    <button class="tab" onclick="switchTab(this,'ops')">🖥️ IT Operations View</button>
+    <button class="tab" onclick="switchTab(this,'tech')">🔧 Technical View</button>
+  </div>
+
+  <div id="tab-exec" class="tab-content active">
+    <div class="audience-grid">
+      <div class="aud-card"><h4>Business Outcomes</h4><ul>
+        <li>Reduction in operational risk through structured data and SLA tracking</li>
+        <li>Faster decision-making with consolidated executive reports</li>
+        <li>Financial asset visibility including depreciation and Net Book Value</li>
+        <li>Audit-ready compliance and licensing reports</li>
+        <li>Single-pane FSO dashboards for service health</li>
+      </ul></div>
+      <div class="aud-card"><h4>Risk & Compliance</h4><ul>
+        <li>Security posture monitoring via CMDB Security Management</li>
+        <li>Software licensing compliance and vendor agreement tracking</li>
+        <li>DR capability for monitoring infrastructure continuity</li>
+        <li>Incident SLA management and trend analysis</li>
+      </ul></div>
+      <div class="aud-card"><h4>Strategic Reporting</h4><ul>
+        <li>Monthly consolidated MANCOM reports</li>
+        <li>Scorecard and bulletin reports for leadership</li>
+        <li>KPI reporting on performance and service health</li>
+        <li>Asset inventory and compliance status reports</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div id="tab-ops" class="tab-content">
+    <div class="audience-grid">
+      <div class="aud-card"><h4>Monitoring & Alerting</h4><ul>
+        <li>Fault identification, alerting and SOP-driven resolution via CMDB</li>
+        <li>ITOC event detection, filtering, validation and escalation</li>
+        <li>AFN Level 1 & 2 for network and application performance monitoring</li>
+        <li>DEM synthetic monitoring to catch issues before users notice</li>
+      </ul></div>
+      <div class="aud-card"><h4>Incident & Problem Mgmt</h4><ul>
+        <li>End-to-end incident tracking and SLA management in ITOC</li>
+        <li>Problem identification, trending and aged analysis</li>
+        <li>IP conflict detection and escalation via IPAM events</li>
+        <li>Log collection, analysis and security incident reporting</li>
+      </ul></div>
+      <div class="aud-card"><h4>Visualisation & Diagrams</h4><ul>
+        <li>Automated L2/L3 network diagrams updated weekly</li>
+        <li>VLAN, switch, router and subnet visualisation</li>
+        <li>FSO single-pane service dashboards</li>
+        <li>IPAM subnet and event dashboards</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div id="tab-tech" class="tab-content">
+    <div class="audience-grid">
+      <div class="aud-card"><h4>Data & Integration</h4><ul>
+        <li>CMDB as the structured data backbone — FCAPS model</li>
+        <li>Integration services: ITSM, SD-WAN, Orchestration, Workflow, APIs</li>
+        <li>FSO framework with ODBC, API Endpoint, Syslog, Meraki, WLC connectors</li>
+        <li>AIOps ETL pipelines in IPAM for automated data processing</li>
+      </ul></div>
+      <div class="aud-card"><h4>Network & Flow</h4><ul>
+        <li>AFN: Core NG Flow, NetScout NG1, ThousandEyes for flow analysis</li>
+        <li>DEM: DNS, HTTP, cloud (AWS/Azure/GCP), SaaS, synthetic monitoring</li>
+        <li>IPAM: automated subnet discovery, VLAN mapping, duplicate IP detection</li>
+        <li>Drawing: automated topology mapping, MAC address and VLAN visualisation</li>
+      </ul></div>
+      <div class="aud-card"><h4>Platform & Infrastructure</h4><ul>
+        <li>Hardware aaS: hardware/software installation, TAC case management</li>
+        <li>DR aaS: datastore replication, NMS switching, infrastructure recovery</li>
+        <li>EUC: endpoint configuration, patch management, IP asset treatment</li>
+        <li>Log: centralised syslog, retention policies, forensic archiving</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- BUSINESS VALUE -->
+<section id="value" class="reveal">
+  <div class="section-label">Business Value</div>
+  <h2 class="section-title">What Core NG Delivers</h2>
+  <p class="section-sub">Technical capabilities translated into measurable business outcomes.</p>
+  <div class="value-grid">
+    <div class="value-card"><div class="value-icon">🔭</div><div class="value-title">Better Visibility</div><div class="value-desc">Complete view of your network, assets, logs and performance from a single platform</div></div>
+    <div class="value-card"><div class="value-icon">⚡</div><div class="value-title">Faster Response</div><div class="value-desc">Automated detection, SOP-driven resolution and SLA tracking reduce MTTR</div></div>
+    <div class="value-card"><div class="value-icon">✅</div><div class="value-title">Improved Compliance</div><div class="value-desc">Software licensing, security policy and audit-ready reporting in one place</div></div>
+    <div class="value-card"><div class="value-icon">📦</div><div class="value-title">Stronger Asset Control</div><div class="value-desc">Full lifecycle management from procurement to retirement with NBV reporting</div></div>
+    <div class="value-card"><div class="value-icon">📊</div><div class="value-title">Better Reporting</div><div class="value-desc">Scheduled, consolidated and executive reports with KPI tracking</div></div>
+    <div class="value-card"><div class="value-icon">🛡️</div><div class="value-title">Reduced Operational Risk</div><div class="value-desc">DR, resilience, fault management and security monitoring reduce exposure</div></div>
+    <div class="value-card"><div class="value-icon">🧩</div><div class="value-title">Integrated Operations</div><div class="value-desc">ITSM, SD-WAN, workflow and business system integrations break down silos</div></div>
+    <div class="value-card"><div class="value-icon">🎯</div><div class="value-title">Better Decisions</div><div class="value-desc">Enriched, structured and visualised data empowers leadership and IT teams</div></div>
+  </div>
+</section>
+
+<!-- GLOSSARY -->
+<section class="reveal">
+  <div class="section-label">Quick Reference</div>
+  <h2 class="section-title">Key Terms Explained</h2>
+  <p class="section-sub">Plain-language definitions for technical terms used across the platform.</p>
+  <div class="glossary-grid">
+    <div class="gloss-card"><div class="gloss-term">CMDB</div><div class="gloss-def">Configuration Management Database — the master record of all IT assets, configurations and relationships</div></div>
+    <div class="gloss-card"><div class="gloss-term">IPAM</div><div class="gloss-def">IP Address Management — tracks every IP address, subnet and VLAN to prevent conflicts and support planning</div></div>
+    <div class="gloss-card"><div class="gloss-term">AFN</div><div class="gloss-def">Application Flow Network — tools that measure, detect and investigate how network traffic and applications perform</div></div>
+    <div class="gloss-card"><div class="gloss-term">DEM</div><div class="gloss-def">Digital Experience Monitoring — monitors the experience of real users across networks, apps, cloud and SaaS</div></div>
+    <div class="gloss-card"><div class="gloss-term">FSO</div><div class="gloss-def">Full Stack Observability — a single dashboard pulling metrics from multiple tools into one unified view</div></div>
+    <div class="gloss-card"><div class="gloss-term">EUC</div><div class="gloss-def">End User Computing — management of workstations and end-user devices as trackable, managed IP assets</div></div>
+    <div class="gloss-card"><div class="gloss-term">ITOC</div><div class="gloss-def">IT Operations Centre — the team and tooling that manages events, incidents and problems in real time</div></div>
+    <div class="gloss-card"><div class="gloss-term">FCAPS</div><div class="gloss-def">Fault, Configuration, Accounting, Performance, Security — the five pillars of network management in the CMDB</div></div>
+    <div class="gloss-card"><div class="gloss-term">DR aaS</div><div class="gloss-def">Disaster Recovery as a Service — capability to restore monitoring infrastructure after a failure or outage</div></div>
+    <div class="gloss-card"><div class="gloss-term">SOP</div><div class="gloss-def">Standard Operating Procedure — documented steps teams follow for consistent, repeatable handling of events</div></div>
+    <div class="gloss-card"><div class="gloss-term">ETL</div><div class="gloss-def">Extract, Transform, Load — automated process that moves and enriches data between systems</div></div>
+    <div class="gloss-card"><div class="gloss-term">CHMS</div><div class="gloss-def">Combined managed solution grouping CMDB, Asset, EUC, Log, ITOC and Drawing into one package</div></div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<div id="closing" class="reveal">
+  <div class="section-label" style="justify-content:center;display:flex">Connected Operational Intelligence</div>
+  <h2 class="closing-title">From fragmented IT data to connected operational intelligence.</h2>
+  <p class="closing-text">Core NG Enterprise Solution brings together asset, network, log, monitoring, reporting, observability and operational services into one structured ecosystem — helping enterprises understand their environment, act faster and make better technology decisions.</p>
+  <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:28px">
+    <div style="padding:10px 20px;background:rgba(0,196,167,.1);border:1px solid rgba(0,196,167,.3);border-radius:8px;font-size:13px;color:var(--teal)">16 Integrated Services</div>
+    <div style="padding:10px 20px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);border-radius:8px;font-size:13px;color:var(--cyan)">7 Service Layers</div>
+    <div style="padding:10px 20px;background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.3);border-radius:8px;font-size:13px;color:var(--blue)">One Unified Platform</div>
+  </div>
+</div>
+
+<script>
+const SERVICES = [
+  {
+    id:'cmdb',name:'CMDB Service',tag:'intelligence',layer:1,badge:'Intelligence',badgeColor:'#00c4a7',
+    purpose:'Creates a structured source of truth for network, infrastructure, configuration, performance, accounting, and security information.',
+    caps:[
+      {cat:'Fault Management',items:['Identification and Logging','Alerting and Notification','Fault Resolution per SOP','Fault Reporting']},
+      {cat:'Configuration Management',items:['Baseline Configuration & Auditing','Change Management','Version Control & Reporting']},
+      {cat:'Performance Management',items:['Capacity Management','Resource Utilization','Optimisation & Reporting']},
+      {cat:'Accounting & Reporting',items:['Measures network usage for billing, auditing, or resource allocation','Report Scheduling','Reporting on KPI']},
+      {cat:'Security Management',items:['Monitor Authentication, Authorisation and Accounting mechanisms','Monitors access controls and ensures policy compliance','Configuration checking against security best practices']},
+    ],
+    outcome:'Helps organisations maintain a reliable, auditable and accurate view of their technology estate.'
+  },
+  {
+    id:'log',name:'Log Service',tag:'monitoring',layer:2,badge:'Monitoring',badgeColor:'#38bdf8',
+    purpose:'Centralises log collection, analysis, retention, archiving, and reporting for operational and security visibility.',
+    caps:[
+      {cat:'Log Collection',items:['Implement centralised syslog servers to collect logs from all network devices and servers']},
+      {cat:'Log Analysis',items:['Use log analysis tools to parse and analyse syslog data for patterns and anomalies']},
+      {cat:'Log Retention & Archiving',items:['Define retention policies for different types of logs','Implement log archiving for compliance and forensic analysis']},
+      {cat:'Log Reporting',items:['Generate reports on log events including security incidents, system errors, and user activities']},
+    ],
+    outcome:'Provides visibility into system activity, security events, errors and user actions.'
+  },
+  {
+    id:'drawing',name:'Drawing Service',tag:'monitoring',layer:2,badge:'Monitoring',badgeColor:'#38bdf8',
+    purpose:'Automatically creates and maintains visual network diagrams for better understanding and troubleshooting.',
+    caps:[
+      {cat:'Automate Drawing',items:['Automate generation of accurate L2 and L3 network diagrams','Provide a user-friendly interface for viewing and interacting with diagrams']},
+      {cat:'Visualise Network',items:['Weekly updates to reflect network changes','Visualize switch connections, VLANs, and MAC addresses','Visualize routers, subnets, and IP routing']},
+      {cat:'Topology Mapping',items:['Map connections between devices']},
+    ],
+    outcome:'Makes complex networks easier to understand, manage and communicate.'
+  },
+  {
+    id:'reporting',name:'Reporting Service',tag:'reporting',layer:5,badge:'Reporting',badgeColor:'#34d399',
+    purpose:'Turns operational and technical data into scheduled, consolidated, management and custom reports.',
+    caps:[
+      {cat:'Scheduled Reports',items:['Monthly, Weekly and Daily Reports','Monthly Consolidated reports','System Generated Reports','Enhanced Reporting Service MANCOM']},
+      {cat:'Custom Adhoc Reports',items:['Enhanced Reporting Service','Scorecard and bulletin reports']},
+    ],
+    outcome:'Gives stakeholders regular, reliable insight into performance, operations and service health.'
+  },
+  {
+    id:'asset',name:'Asset as a Service',tag:'asset',layer:3,badge:'Asset & Endpoint',badgeColor:'#818cf8',
+    purpose:'Tracks and manages the lifecycle, inventory, ownership, compliance and financial status of IT assets.',
+    caps:[
+      {cat:'Mobile App Scanning',items:['Onboarding of new Assets via Mobile App','Retrieve Asset information from barcode via Mobile App']},
+      {cat:'Asset Inventory',items:['Comprehensive inventory of all IT assets: hardware, software, virtual','Track asset details such as location, ownership and status']},
+      {cat:'Asset Lifecycle Management',items:['Monitor the lifecycle of assets from procurement to retirement','Track asset depreciation and maintenance schedules']},
+      {cat:'Compliance & Licensing',items:['Report on software tracking, licensing, and vendor compliance','Report on deployed software in the Customer estate']},
+      {cat:'Reporting',items:['Generate asset reports including inventory status and compliance status','Financial replacement indicators','Net Book Value Reports']},
+    ],
+    outcome:'Improves asset control, lifecycle planning, compliance and financial visibility.'
+  },
+  {
+    id:'euc',name:'EUC as a Service',tag:'asset',layer:3,badge:'Asset & Endpoint',badgeColor:'#818cf8',
+    purpose:'Manages and monitors end-user computing assets such as workstations as trackable IP assets.',
+    caps:[
+      {cat:'Configuration & Patch Management',items:['Ensure endpoints are configured according to company policies','Monitor the deployment of security patches and updates']},
+      {cat:'IP Asset Treatment',items:['Workstations treated as IP assets for precise tracking and management']},
+      {cat:'Tracking & Movement History',items:['Comprehensive history of asset movements, transfers, assignments, and disposals']},
+    ],
+    outcome:'Improves endpoint visibility, compliance and movement tracking.'
+  },
+  {
+    id:'ipam',name:'IPAM as a Service',tag:'asset',layer:3,badge:'Asset & Endpoint',badgeColor:'#818cf8',
+    purpose:'Manages IP address planning, allocation, utilisation, discovery, enrichment, and IP-related events.',
+    caps:[
+      {cat:'Deployment Options',items:['Core NG ITRP with data enrichment: subnets linked to regions, locations, custodian business','Standalone IPAM with manual subnet ingestion and direct device access']},
+      {cat:'IP Planning & Allocation',items:['IP plan with subnets and ranges allocated to business unit or purpose']},
+      {cat:'Incident Tracking',items:['Duplicate IPs','Duplicate IP in Cisco Configuration','Server/IP Going Live Without Reservation','Server/IP Changing MAC Address','Server with Many/Changed DNS Name(s)','Same MAC Address Duplicating in other Locations','Suspect MAC Vendor']},
+      {cat:'Automated Scans',items:['Automated SCAN of Critical Subnets','Discovery of VLANs and VLAN Descriptions linked to Subnets','Instantiate unknown Subnets from routing tables']},
+      {cat:'BAU Service',items:['Ensure automated services are running','Automated discovery, imports and manual input','Monitor IPAM dashboard and events','Maintain Company, BUs, people/login, and BUs linked to subnets']},
+      {cat:'AIOps',items:['ETL automated data processing pipelines']},
+    ],
+    outcome:'Reduces IP conflicts, improves subnet visibility, strengthens planning and supports automated discovery.'
+  },
+  {
+    id:'mobile',name:'Mobile App',tag:'asset',layer:3,badge:'Asset & Endpoint',badgeColor:'#818cf8',
+    purpose:'Supports asset-related field activities such as scanning, onboarding and retrieving asset information via mobile device.',
+    caps:[
+      {cat:'Field Capabilities',items:['Onboarding of new assets via barcode scanning','Retrieve asset information from barcode in the field','Supports Asset aaS operations for field teams']},
+    ],
+    outcome:'Makes asset management easier for operational teams working in the field.'
+  },
+  {
+    id:'afn',name:'AFN Service',tag:'monitoring',layer:2,badge:'Monitoring',badgeColor:'#38bdf8',
+    purpose:'Provides application and flow network visibility through tools such as Core NG Flow, NetScout NG1 and ThousandEyes.',
+    caps:[
+      {cat:'Products',items:['Core NG Flow','NetScout NG1','ThousandEyes']},
+      {cat:'Core Capabilities',items:['Measure & Detect','Correlate','Investigate','Respond']},
+      {cat:'Level 1 Service',items:['Resilient Service & Health Checks','System Administration / Tooling','Software Patch Management (OH)','Data Flow Management / Tapping & Brokering','"X" list Management / unknown applications','Standard Escalations / Email Response','Ad-hoc Investigations / 1 per day']},
+      {cat:'Level 2 Service',items:['All Level 1 capabilities','Proactive Monitoring / E-O-S - OH','Ad-hoc Investigations / 3 per day','Daily, Weekly, Monthly AFN Reports']},
+    ],
+    outcome:'Helps enterprises measure, detect, correlate, investigate and respond to network and application performance issues.'
+  },
+  {
+    id:'dem',name:'DEM Services',tag:'monitoring',layer:2,badge:'Monitoring',badgeColor:'#38bdf8',
+    purpose:'Provides Digital Experience Monitoring for network, application, cloud, SaaS, DNS, HTTP and synthetic monitoring.',
+    caps:[
+      {cat:'Service Components',items:['Systems Support and Maintenance','Configuration','Investigation and Discovery','Reporting','Design, Architecture & Planning']},
+      {cat:'Licensing Options',items:['CAPEX: Cisco ThousandEyes EA3.0 or A La Carte Standard Licensing','OPEX: Sintrex MSLA Licensing (TEaaS)']},
+      {cat:'Network Performance',items:['Latency, packet loss, jitter between users, clouds and data centres']},
+      {cat:'Application Performance',items:['Response time, availability and transaction throughput monitoring']},
+      {cat:'Cloud & SaaS Visibility',items:['AWS, Azure, Google Cloud performance','SaaS: Office 365, Salesforce and more']},
+      {cat:'DNS & HTTP Performance',items:['DNS resolution times, server performance, HTTP response times']},
+      {cat:'Synthetic Monitoring',items:['Simulated user interactions to proactively identify issues before they affect real users']},
+    ],
+    outcome:'Improves digital experience, application reliability, cloud visibility and proactive performance management.'
+  },
+  {
+    id:'fso',name:'FSO Service',tag:'monitoring',layer:2,badge:'Monitoring',badgeColor:'#38bdf8',
+    purpose:'Creates service-level dashboards and full-stack observability views by extracting and normalising metrics from multiple data sources.',
+    caps:[
+      {cat:'Service Level Dashboards',items:['Holistic / single-pane views','Extracting metrics from Multiple Data Sources']},
+      {cat:'Data Sources',items:['Core NG / CMDB','ThousandEyes','nGeniusOne','Cisco WLC','Meraki','Syslogs','API Endpoints','ODBC Connectors']},
+      {cat:'FSO Framework',items:['Extraction and normalisation of data from various sources','Open standard, vendor-neutral FSO framework','Integrates with any AFN Service level']},
+    ],
+    outcome:'Provides a single-pane view of service health across multiple tools, platforms and data sources.'
+  },
+  {
+    id:'dr',name:'DR as a Service',tag:'resilience',layer:6,badge:'Resilience',badgeColor:'#f87171',
+    purpose:'Provides disaster recovery capability for Core NG Software and infrastructure monitoring.',
+    caps:[
+      {cat:'DR Capabilities',items:['Implementing to datastores across different locations','Enables switching of the active NMS between locations','Capability to restore infrastructure monitoring','Provides DR Service for the Core NG Software','DR Requirements compliance']},
+    ],
+    outcome:'Improves resilience and recovery of monitoring infrastructure.'
+  },
+  {
+    id:'hw',name:'Hardware as a Service',tag:'resilience',layer:6,badge:'Resilience',badgeColor:'#f87171',
+    purpose:'Supports and maintains the hardware required to enable Sintrex services.',
+    caps:[
+      {cat:'Hardware Services',items:['Support and maintenance on Hardware that enables Sintrex Services','Hardware and Software Installation','Software Updates','Systems Support: Logging and Managing TAC/Support Cases','Third-party Hardware support','Manage Licenses and Subscriptions']},
+    ],
+    outcome:'Ensures the supporting hardware environment remains operational, maintained and supported.'
+  },
+  {
+    id:'itoc',name:'ITOC Services',tag:'operations',layer:4,badge:'Operations',badgeColor:'#f59e0b',
+    purpose:'Provides event, incident and problem management for technology operations.',
+    caps:[
+      {cat:'Event Management',items:['SOP Driven Event Detection and Filtering','Event Updates and Logging','Event Validation','Event Escalation']},
+      {cat:'Incident Management',items:['Incident SLA Management','End-to-end Incident Tracking','End-to-end Incident Reporting','Incident Trend Analysis']},
+      {cat:'Problem Management',items:['Identification & Trending','Investigative Reporting','Aged Analysis']},
+    ],
+    outcome:'Improves operational response, incident visibility, SLA tracking and problem resolution.'
+  },
+  {
+    id:'integration',name:'Integration Services',tag:'monitoring',layer:7,badge:'Integrations',badgeColor:'#a78bfa',
+    purpose:'Connects Core NG and related services with third-party tooling and business systems.',
+    caps:[
+      {cat:'Integration Targets',items:['ITSM (IT Service Management platforms)','SD-WAN solutions','Orchestration systems','Workflow tools','Business Systems']},
+    ],
+    outcome:'Helps unify workflows, reduce silos and connect operational data across the business.'
+  },
+  {
+    id:'chms',name:'CHMS Solution',tag:'monitoring',layer:7,badge:'Bundled Solution',badgeColor:'#a78bfa',
+    purpose:'A combined solution grouping selected Core NG services for broader operational management.',
+    caps:[
+      {cat:'Included Services',items:['CMDB Service','Asset Service','EUC Service','Log Service','ITOC Services','Drawing Service']},
+    ],
+    outcome:'Combines key operational services into a broader managed solution for visibility, control and support.'
+  },
+];
+
+const layerMap = {1:[],2:[],3:[],4:[],5:[],6:[],7:[]};
+SERVICES.forEach(s=>layerMap[s.layer].push(s));
+
+function buildSvcCard(s, inExplorer=false){
+  return `<div class="svc-card" data-id="${s.id}" data-tag="${s.tag}" data-name="${s.name.toLowerCase()}" data-purpose="${s.purpose.toLowerCase()}">
+    <div class="svc-header" onclick="toggleSvc(this.parentElement)">
+      <span class="svc-badge" style="background:${s.badgeColor}22;color:${s.badgeColor};border:1px solid ${s.badgeColor}44">${s.badge}</span>
+      <div><div class="svc-name">${s.name}</div><div class="svc-purpose">${s.purpose.substring(0,80)}${s.purpose.length>80?'…':''}</div></div>
+    </div>
+    <div class="svc-detail">
+      <h4>Purpose</h4><p style="font-size:12px;color:var(--muted);margin-bottom:8px">${s.purpose}</p>
+      ${s.caps.map(c=>`<h4>${c.cat}</h4><ul class="cap-list">${c.items.map(i=>`<li>${i}</li>`).join('')}</ul>`).join('')}
+      <div class="outcome-box">💡 <strong>Business Outcome:</strong> ${s.outcome}</div>
+    </div>
+  </div>`;
+}
+
+// Populate layer bodies
+Object.keys(layerMap).forEach(l=>{
+  const el = document.getElementById(`layer${l}-svcs`);
+  if(el) el.innerHTML = layerMap[l].map(s=>buildSvcCard(s)).join('');
+});
+
+// Populate explorer
+const explorer = document.getElementById('svc-explorer');
+explorer.innerHTML = SERVICES.map(s=>buildSvcCard(s,true)).join('');
+
+function toggleSvc(card){
+  card.classList.toggle('open');
+}
+
+function toggleLayer(header){
+  header.parentElement.classList.toggle('open');
+}
+
+function expandAll(){
+  document.querySelectorAll('.layer-card').forEach(c=>c.classList.add('open'));
+}
+
+function collapseAll(){
+  document.querySelectorAll('.layer-card').forEach(c=>c.classList.remove('open'));
+}
+
+let activeTag = 'all';
+function filterTag(btn, tag){
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  activeTag = tag;
+  filterSvcs();
+}
+
+function filterSvcs(){
+  const q = document.getElementById('svc-search').value.toLowerCase().trim();
+  const cards = document.querySelectorAll('#svc-explorer .svc-card');
+  let visible = 0;
+  cards.forEach(card=>{
+    const tagMatch = activeTag==='all' || card.dataset.tag===activeTag;
+    const name = card.dataset.name || '';
+    const purpose = card.dataset.purpose || '';
+    const textMatch = !q || name.includes(q) || purpose.includes(q) ||
+      card.textContent.toLowerCase().includes(q);
+    const show = tagMatch && textMatch;
+    card.style.display = show ? '' : 'none';
+    if(show) visible++;
+  });
+  document.getElementById('no-results').style.display = visible===0?'block':'none';
+}
+
+function switchTab(btn, id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+}
+
+// Nav active state
+const navLinks = document.querySelectorAll('#sticky-nav a');
+const sections = ['hero','ecosystem','flow','explorer','audience','value'];
+function updateNav(){
+  let current = 'hero';
+  sections.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el && window.scrollY >= el.offsetTop - 80) current = id;
+  });
+  navLinks.forEach(a=>{
+    a.classList.toggle('active', a.getAttribute('href')==='#'+current);
+  });
+}
+window.addEventListener('scroll', updateNav);
+
+// Smooth scroll
+navLinks.forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if(target) target.scrollIntoView({behavior:'smooth'});
+  });
+});
+
+// Reveal on scroll
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.08});
+reveals.forEach(r=>observer.observe(r));
+document.querySelector('.reveal').classList.add('visible');
+</script>
